@@ -234,49 +234,71 @@ export const boardgamesViewHtml = `
 
     <!-- Sub-tab 3: Reports -->
     <div id="bg-tab-reports" class="hidden space-y-6">
-        <div class="bg-white p-8 rounded-3xl border border-slate-200 shadow-sm space-y-3">
-            <h4 class="font-black text-slate-800 uppercase tracking-wider text-xs flex items-center gap-2 mb-4">
-                <i data-lucide="bar-chart" size="16" class="text-indigo-600"></i> Boardgames Collection Summary
-            </h4>
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 text-sm font-bold text-slate-700">
-                <div class="p-4 bg-slate-50 rounded-2xl border border-slate-100 flex flex-col justify-center">
-                    <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Total Items</span>
-                    <span id="metric-total-items" class="text-xl font-black text-slate-900 mt-0.5">0</span>
-                    <div class="text-xs text-slate-500 font-normal mt-1 space-x-2">
-                        <span id="metric-total-games">0 Games</span> • <span id="metric-total-expansions">0 Expansions</span>
-                    </div>
+        <div class="bg-white p-8 rounded-3xl border border-slate-200 shadow-sm space-y-6">
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 border-b border-slate-100 pb-4">
+                <h4 class="font-black text-slate-800 uppercase tracking-wider text-xs flex items-center gap-2">
+                    <i data-lucide="bar-chart" size="16" class="text-indigo-600"></i> Boardgames Collection Summary
+                </h4>
+                <span class="text-[11px] font-bold text-slate-400 bg-slate-100 px-3 py-1 rounded-full">Live Collection Audit</span>
+            </div>
+
+            <div class="bg-gradient-to-r from-slate-50 to-indigo-50/30 p-5 rounded-2xl border border-slate-100">
+                <p class="text-base sm:text-lg font-bold text-slate-700 leading-relaxed">
+                    Total number of items: <span id="metric-total-items" class="text-xl sm:text-2xl font-black text-slate-900 px-1">0</span>, 
+                    out of which <span id="metric-total-games" class="text-xl sm:text-2xl font-black text-indigo-600 px-1">0</span> games 
+                    and <span id="metric-total-expansions" class="text-xl sm:text-2xl font-black text-purple-600 px-1">0</span> expansions.
+                </p>
+            </div>
+
+            <div class="space-y-3">
+                <div class="flex items-center gap-2">
+                    <span class="text-xs font-black text-slate-400 uppercase tracking-widest flex items-center gap-1.5">
+                        <i data-lucide="layout-grid" size="14" class="text-indigo-500"></i> Games by Type
+                    </span>
+                    <span class="text-[11px] text-slate-400 font-medium">(excluding expansions)</span>
                 </div>
-                <div class="p-4 bg-slate-50 rounded-2xl border border-slate-100 flex flex-col justify-center">
-                    <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Unplayed Games</span>
-                    <span id="metric-unplayed" class="text-xl font-black text-indigo-600 mt-0.5">0/0</span>
-                </div>
-                <div class="p-4 bg-slate-50 rounded-2xl border border-slate-100 flex flex-col justify-center">
-                    <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Decisions (TBD)</span>
-                    <span id="metric-decisions" class="text-xl font-black text-amber-500 mt-0.5">0/0</span>
-                </div>
-                <div class="p-4 bg-slate-50 rounded-2xl border border-slate-100 flex flex-col justify-center">
-                    <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Checked Status</span>
-                    <span id="metric-checked" class="text-xl font-black text-emerald-600 mt-0.5">0/0</span>
+                <div id="games-type-breakdown-list" class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                    <!-- Dynamic games sub-list: Games, Legacy, Campaign, Escape, etc. -->
                 </div>
             </div>
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div class="bg-white p-8 rounded-3xl border border-slate-200 shadow-sm flex flex-col items-center text-center">
-                <div class="bg-indigo-50 text-indigo-600 p-4 rounded-2xl mb-4"><i data-lucide="play-circle" size="32"></i></div>
-                <p class="text-slate-400 font-black uppercase tracking-widest text-[10px] mb-2">Unplayed Games</p>
-                <h3 id="rep-unplayed" class="text-base font-bold text-slate-800 leading-relaxed"></h3>
+            <!-- Card 1: Unplayed Games -->
+            <div class="bg-white p-8 rounded-3xl border border-slate-200 shadow-sm flex flex-col items-center text-center justify-between">
+                <div class="w-full flex flex-col items-center">
+                    <div class="w-14 h-14 bg-indigo-50 text-indigo-600 rounded-2xl flex items-center justify-center mb-4">
+                        <i data-lucide="play-circle" size="30"></i>
+                    </div>
+                    <p class="text-slate-400 font-black uppercase tracking-widest text-[11px] mb-3">Unplayed Games</p>
+                    <h3 id="rep-unplayed" class="text-base font-bold text-slate-800 leading-relaxed px-1"></h3>
+                    <div id="breakdown-unplayed" class="w-full mt-6 pt-5 border-t border-slate-100 space-y-2 text-xs"></div>
+                </div>
             </div>
-            <div class="bg-white p-8 rounded-3xl border border-slate-200 shadow-sm flex flex-col items-center text-center">
-                <div class="bg-amber-50 text-amber-500 p-4 rounded-2xl mb-4"><i data-lucide="alert-circle" size="32"></i></div>
-                <p class="text-slate-400 font-black uppercase tracking-widest text-[10px] mb-2">Decisions Needed (TBD)</p>
-                <h3 id="rep-tbd" class="text-base font-bold text-slate-800 leading-relaxed"></h3>
+
+            <!-- Card 2: Decisions Needed (TBD) -->
+            <div class="bg-white p-8 rounded-3xl border border-slate-200 shadow-sm flex flex-col items-center text-center justify-between">
+                <div class="w-full flex flex-col items-center">
+                    <div class="w-14 h-14 bg-amber-50 text-amber-500 rounded-2xl flex items-center justify-center mb-4">
+                        <i data-lucide="alert-circle" size="30"></i>
+                    </div>
+                    <p class="text-slate-400 font-black uppercase tracking-widest text-[11px] mb-3">Decisions Needed (TBD)</p>
+                    <h3 id="rep-tbd" class="text-base font-bold text-slate-800 leading-relaxed px-1"></h3>
+                    <div id="breakdown-tbd" class="w-full mt-6 pt-5 border-t border-slate-100 space-y-2 text-xs"></div>
+                </div>
             </div>
-            <div class="bg-white p-8 rounded-3xl border border-slate-200 shadow-sm flex flex-col items-center text-center">
-                <div class="bg-rose-50 text-rose-500 p-4 rounded-2xl mb-4"><i data-lucide="x-circle" size="32"></i></div>
-                <p class="text-slate-400 font-black uppercase tracking-widest text-[10px] mb-2">Unchecked Games</p>
-                <h3 id="rep-unchecked" class="text-base font-bold text-slate-800 leading-relaxed mb-4"></h3>
-                <button onclick="showUncheckedGames()" class="bg-slate-900 hover:bg-slate-800 text-white text-xs px-5 py-2.5 rounded-xl font-bold transition-all flex items-center gap-2 shadow-sm">
+
+            <!-- Card 3: Unchecked Games -->
+            <div class="bg-white p-8 rounded-3xl border border-slate-200 shadow-sm flex flex-col items-center text-center justify-between">
+                <div class="w-full flex flex-col items-center">
+                    <div class="w-14 h-14 bg-rose-50 text-rose-500 rounded-2xl flex items-center justify-center mb-4">
+                        <i data-lucide="x-circle" size="30"></i>
+                    </div>
+                    <p class="text-slate-400 font-black uppercase tracking-widest text-[11px] mb-3">Unchecked Games</p>
+                    <h3 id="rep-unchecked" class="text-base font-bold text-slate-800 leading-relaxed px-1 mb-2"></h3>
+                    <div id="breakdown-unchecked" class="w-full mt-4 pt-5 border-t border-slate-100 space-y-2 text-xs"></div>
+                </div>
+                <button onclick="showUncheckedGames()" class="mt-6 w-full bg-slate-900 hover:bg-slate-800 text-white text-xs py-3 px-4 rounded-xl font-bold transition-all flex items-center justify-center gap-2 shadow-sm">
                     <i data-lucide="layers" size="14"></i> Display Unchecked Games
                 </button>
             </div>
