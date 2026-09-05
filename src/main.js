@@ -2,10 +2,14 @@
 import './styles/main.css';
 
 // Import Views
+import { authViewHtml } from './modules/auth/authView.js';
 import { boardgamesViewHtml } from './modules/boardgames/boardgamesView.js';
 import { booksViewHtml } from './modules/books/booksView.js';
 import { comicsViewHtml } from './modules/comics/comicsView.js';
 import { modalsViewHtml } from './modules/modals/modalsView.js';
+
+// Import Auth Service
+import { signInWithEmail, signOutUser, getCurrentSession, onAuthChange } from './modules/auth/authService.js';
 
 // Import Boardgames Functions
 import {
@@ -78,6 +82,11 @@ import { handleImgError, getSafeImage, getProp, exportToCSV } from './utils/help
 
 // 1. Mount Views to DOM
 function mountApp() {
+    const authRoot = document.getElementById('auth-root');
+    if (authRoot) {
+        authRoot.innerHTML = authViewHtml;
+    }
+
     const categoriesRoot = document.getElementById('categories-root');
     if (categoriesRoot) {
         categoriesRoot.innerHTML = boardgamesViewHtml + booksViewHtml + comicsViewHtml;
@@ -214,6 +223,10 @@ Object.assign(window, {
     cancelDelete,
     executeDelete,
 
+    // Auth
+    handleSignIn,
+    handleSignOut,
+
     // Helpers
     handleImgError,
     getSafeImage,
@@ -221,22 +234,101 @@ Object.assign(window, {
     exportToCSV
 });
 
-// 4. Initialize application on load
-document.addEventListener('DOMContentLoaded', () => {
-    mountApp();
-    switchCategory('boardgames');
-    showSubTab('boardgames', 'manager');
-    loadData();
-    loadBooksData();
-    if (window.lucide) window.lucide.createIcons();
-});
+// 4. Auth State & Lifecycle
+let dataLoaded = false;
 
-// If DOM is already ready
-if (document.readyState === 'interactive' || document.readyState === 'complete') {
-    mountApp();
-    switchCategory('boardgames');
-    showSubTab('boardgames', 'manager');
-    loadData();
-    loadBooksData();
+export function setAuthState(session) {
+    const authRoot = document.getElementById('auth-root');
+    const appShell = document.getElementById('app-shell');
+    const emailDisplay = document.getElementById('user-email-display');
+
+    if (session && session.user) {
+        if (authRoot) authRoot.classList.add('hidden');
+        if (appShell) appShell.classList.remove('hidden');
+        if (emailDisplay) emailDisplay.innerText = session.user.email || "Authenticated";
+
+        if (!dataLoaded) {
+            dataLoaded = true;
+            switchCategory('boardgames');
+            showSubTab('boardgames', 'manager');
+            loadData();
+            loadBooksData();
+        }
+    } else {
+        if (authRoot) authRoot.classList.remove('hidden');
+        if (appShell) appShell.classList.add('hidden');
+        if (emailDisplay) emailDisplay.innerText = "";
+        dataLoaded = false;
+    }
+
     if (window.lucide) window.lucide.createIcons();
+}
+
+export async function handleSignIn() {
+    const emailInput = document.getElementById('auth-email');
+    const passwordInput = document.getElementById('auth-password');
+    const errorBox = document.getElementById('auth-error-box');
+    const errorMsg = document.getElementById('auth-error-msg');
+    const btnText = document.getElementById('btn-auth-text');
+    const btnSubmit = document.getElementById('btn-auth-submit');
+
+    if (!emailInput || !passwordInput) return;
+    const email = emailInput.value.trim();
+    const password = passwordInput.value;
+
+    if (!email || !password) {
+        if (errorBox && errorMsg) {
+            errorBox.classList.remove('hidden');
+            errorMsg.innerText = "Please enter both email and password.";
+        }
+        if (window.lucide) window.lucide.createIcons();
+        return;
+    }
+
+    try {
+        if (errorBox) errorBox.classList.add('hidden');
+        if (btnText) btnText.innerText = "Signing in...";
+        if (btnSubmit) btnSubmit.disabled = true;
+
+        const data = await signInWithEmail(email, password);
+        setAuthState(data.session);
+    } catch (err) {
+        if (errorBox && errorMsg) {
+            errorBox.classList.remove('hidden');
+            errorMsg.innerText = err.message || "Invalid credentials. Please check your email and password.";
+        }
+    } finally {
+        if (btnText) btnText.innerText = "Sign In";
+        if (btnSubmit) btnSubmit.disabled = false;
+        if (window.lucide) window.lucide.createIcons();
+    }
+}
+
+export async function handleSignOut() {
+    try {
+        await signOutUser();
+        setAuthState(null);
+    } catch (err) {
+        console.error("Sign out error:", err);
+    }
+}
+
+export async function initApp() {
+    mountApp();
+
+    // Subscribe to auth changes
+    onAuthChange((event, session) => {
+        setAuthState(session);
+    });
+
+    // Check existing session
+    const session = await getCurrentSession();
+    setAuthState(session);
+}
+
+// 5. Initialize application on load
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initApp);
+} else {
+    initApp();
 }

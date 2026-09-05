@@ -13,7 +13,11 @@
 </head>
 <body class="bg-slate-100 text-slate-900 pb-20 min-h-screen">
 
-    <div class="max-w-6xl mx-auto p-4 md:p-8">
+    <!-- Auth Root (Sign In Screen) -->
+    <div id="auth-root"></div>
+
+    <!-- Main Application Shell (hidden until authenticated) -->
+    <div id="app-shell" class="hidden max-w-6xl mx-auto p-4 md:p-8">
         
         <!-- Header & 3 Main Topics Navigation -->
         <header class="mb-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
@@ -24,20 +28,34 @@
                 <p class="text-slate-500 font-bold text-sm mt-0.5">Your personal collection vault (Dev)</p>
             </div>
             
-            <nav class="bg-slate-900 p-1.5 rounded-2xl flex shadow-lg border border-slate-800">
-                <button onclick="switchCategory('boardgames')" id="cat-nav-boardgames" 
-                    class="flex-1 px-6 py-2.5 rounded-xl text-sm font-black transition-all duration-200 bg-indigo-600 text-white shadow-md">
-                    <i data-lucide="dices" class="inline-block mr-1.5 mb-0.5" size="16"></i> Boardgames
-                </button>
-                <button onclick="switchCategory('books')" id="cat-nav-books" 
-                    class="flex-1 px-6 py-2.5 rounded-xl text-sm font-bold transition-all duration-200 text-slate-400 hover:text-slate-200">
-                    <i data-lucide="book" class="inline-block mr-1.5 mb-0.5" size="16"></i> Books
-                </button>
-                <button onclick="switchCategory('comics')" id="cat-nav-comics" 
-                    class="flex-1 px-6 py-2.5 rounded-xl text-sm font-bold transition-all duration-200 text-slate-400 hover:text-slate-200">
-                    <i data-lucide="newspaper" class="inline-block mr-1.5 mb-0.5" size="16"></i> Comics
-                </button>
-            </nav>
+            <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+                <nav class="bg-slate-900 p-1.5 rounded-2xl flex shadow-lg border border-slate-800">
+                    <button onclick="switchCategory('boardgames')" id="cat-nav-boardgames" 
+                        class="flex-1 px-6 py-2.5 rounded-xl text-sm font-black transition-all duration-200 bg-indigo-600 text-white shadow-md">
+                        <i data-lucide="dices" class="inline-block mr-1.5 mb-0.5" size="16"></i> Boardgames
+                    </button>
+                    <button onclick="switchCategory('books')" id="cat-nav-books" 
+                        class="flex-1 px-6 py-2.5 rounded-xl text-sm font-bold transition-all duration-200 text-slate-400 hover:text-slate-200">
+                        <i data-lucide="book" class="inline-block mr-1.5 mb-0.5" size="16"></i> Books
+                    </button>
+                    <button onclick="switchCategory('comics')" id="cat-nav-comics" 
+                        class="flex-1 px-6 py-2.5 rounded-xl text-sm font-bold transition-all duration-200 text-slate-400 hover:text-slate-200">
+                        <i data-lucide="newspaper" class="inline-block mr-1.5 mb-0.5" size="16"></i> Comics
+                    </button>
+                </nav>
+
+                <!-- User Profile & Sign Out -->
+                <div class="flex items-center justify-between sm:justify-start gap-2 bg-white px-3.5 py-2 rounded-2xl border border-slate-200 shadow-sm text-xs font-bold text-slate-700">
+                    <div class="flex items-center gap-1.5 truncate max-w-[180px]">
+                        <i data-lucide="user" size="14" class="text-indigo-600 flex-shrink-0"></i>
+                        <span id="user-email-display" class="truncate text-slate-700"></span>
+                    </div>
+                    <button onclick="handleSignOut()" title="Sign Out" class="ml-1 p-1 text-slate-400 hover:text-rose-600 transition-colors flex items-center gap-1 cursor-pointer">
+                        <i data-lucide="log-out" size="14"></i>
+                        <span class="sm:hidden text-[11px]">Sign Out</span>
+                    </button>
+                </div>
+            </div>
         </header>
 
         <!-- Dynamic Category Containers (Boardgames, Books, Comics) -->
