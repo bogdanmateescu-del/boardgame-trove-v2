@@ -45,6 +45,18 @@ export function openGame(uid) {
     if (elComments) elComments.value = currentGame.Comments;
     if (elImg) elImg.src = getSafeImage(currentGame.Image);
     
+    const elBggLink = document.getElementById('modal-bgg-link');
+    const elBggText = document.getElementById('modal-bgg-link-text');
+    if (elBggLink) {
+        const hasBggId = currentGame.BGGID && String(currentGame.BGGID).trim() !== '' && String(currentGame.BGGID) !== '0';
+        elBggLink.href = hasBggId
+            ? `https://boardgamegeek.com/boardgame/${currentGame.BGGID}`
+            : `https://boardgamegeek.com/geeksearch.php?action=search&objecttype=boardgame&q=${encodeURIComponent(currentGame.Name)}`;
+        if (elBggText) {
+            elBggText.innerText = hasBggId ? "BGG Link" : "Search on BGG";
+        }
+    }
+    
     originalGameData = { ...currentGame };
 
     toggleEditMode(false);
@@ -70,6 +82,16 @@ export function toggleEditMode(isEditing) {
         if (imgDisplay) imgDisplay.src = getSafeImage(modalTempImage);
         const results = document.getElementById('modal-bgg-results');
         if (results) results.classList.add('hidden');
+
+        const elBggLink = document.getElementById('modal-bgg-link');
+        const elBggText = document.getElementById('modal-bgg-link-text');
+        if (elBggLink) {
+            const hasBggId = originalGameData.BGGID && String(originalGameData.BGGID).trim() !== '' && String(originalGameData.BGGID) !== '0';
+            elBggLink.href = hasBggId
+                ? `https://boardgamegeek.com/boardgame/${originalGameData.BGGID}`
+                : `https://boardgamegeek.com/geeksearch.php?action=search&objecttype=boardgame&q=${encodeURIComponent(originalGameData.Name || '')}`;
+            if (elBggText) elBggText.innerText = hasBggId ? "BGG Link" : "Search on BGG";
+        }
     }
 
     inputs.forEach(id => {
@@ -238,5 +260,13 @@ export async function selectModalBGGGame(id, name) {
     } catch(e) {
         if (document.getElementById('modal-img-display')) document.getElementById('modal-img-display').src = getSafeImage(null);
     }
+
+    const elBggLink = document.getElementById('modal-bgg-link');
+    const elBggText = document.getElementById('modal-bgg-link-text');
+    if (elBggLink) {
+        elBggLink.href = `https://boardgamegeek.com/boardgame/${id}`;
+        if (elBggText) elBggText.innerText = "BGG Link";
+    }
+
     checkChanges(); 
 }

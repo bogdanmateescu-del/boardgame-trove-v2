@@ -166,6 +166,12 @@ export const modalsViewHtml = `
                     <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Name</label>
                     <input id="modal-name" onkeydown="handleBggKeydown(event, 'edit')" oninput="modalBggSearch(this.value); checkChanges()" autocomplete="off" class="w-full p-3 mt-1 rounded-xl border-2 border-transparent bg-slate-50 text-slate-800 font-black text-lg outline-none transition-all pointer-events-none" readonly>
                     <div id="modal-bgg-results" class="absolute z-[9999] w-full bg-white shadow-2xl rounded-b-xl hidden max-h-60 overflow-y-auto border border-indigo-100 mt-1 left-0"></div>
+                    <div id="modal-bgg-link-container" class="mt-2 ml-1">
+                        <a id="modal-bgg-link" href="#" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1.5 text-xs font-bold text-indigo-600 hover:text-indigo-800 hover:underline bg-indigo-50/80 hover:bg-indigo-100 px-3 py-1.5 rounded-xl transition-all">
+                            <i data-lucide="external-link" size="13"></i>
+                            <span id="modal-bgg-link-text">BGG Link</span>
+                        </a>
+                    </div>
                 </div>
                 
                 <div class="grid grid-cols-2 gap-5">
