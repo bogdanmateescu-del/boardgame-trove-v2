@@ -158,6 +158,21 @@ export function renderDashboard() {
     if (window.lucide) window.lucide.createIcons();
 }
 
+export function getBggLinkHtml(g) {
+    const hasBggId = g.BGGID && String(g.BGGID).trim() !== '' && String(g.BGGID) !== '0';
+    const url = hasBggId
+        ? `https://boardgamegeek.com/boardgame/${g.BGGID}`
+        : `https://boardgamegeek.com/geeksearch.php?action=search&objecttype=boardgame&q=${encodeURIComponent(g.Name)}`;
+
+    return `
+        <div class="mb-1.5">
+            <a href="${url}" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()" class="inline-flex items-center gap-1 text-[10px] font-bold text-indigo-600 hover:text-indigo-800 hover:underline">
+                <i data-lucide="external-link" size="10"></i> BGG Link
+            </a>
+        </div>
+    `;
+}
+
 export function renderDashboardCard(g) {
     return `
         <div onclick="openGame('${g.UID}')" class="cursor-pointer group relative bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all flex flex-col h-full">
@@ -170,6 +185,7 @@ export function renderDashboardCard(g) {
             <div class="p-3 flex-grow flex flex-col justify-between">
                 <div>
                     <h4 class="font-black text-slate-800 text-xs leading-tight line-clamp-2 mb-1 group-hover:text-indigo-600 transition-colors">${g.Name}</h4>
+                    ${getBggLinkHtml(g)}
                     <div class="flex items-center gap-1 text-indigo-600 font-black text-[9px] uppercase tracking-wider mb-1">
                         <i data-lucide="map-pin" size="10"></i> ${g.Location}
                     </div>
@@ -252,12 +268,15 @@ export function applyFilters() {
                         <img src="${getSafeImage(g.Image)}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" onerror="handleImgError(this)">
                     </div>
                     <div class="p-2.5 flex-grow flex flex-col justify-between">
-                        <h4 class="font-black text-slate-800 text-xs leading-tight line-clamp-2">${g.Name}</h4>
-                        <div class="flex items-center gap-1 text-indigo-600 font-black text-[9px] uppercase tracking-wider mt-1 mb-1">
-                            <i data-lucide="map-pin" size="10"></i> ${g.Location}
-                        </div>
-                        <div class="flex items-center gap-1 text-slate-500 font-bold text-[9px]">
-                            <i data-lucide="users" size="10"></i> ${g.Players || 'N/A'}
+                        <div>
+                            <h4 class="font-black text-slate-800 text-xs leading-tight line-clamp-2 mb-1">${g.Name}</h4>
+                            ${getBggLinkHtml(g)}
+                            <div class="flex items-center gap-1 text-indigo-600 font-black text-[9px] uppercase tracking-wider mb-1">
+                                <i data-lucide="map-pin" size="10"></i> ${g.Location}
+                            </div>
+                            <div class="flex items-center gap-1 text-slate-500 font-bold text-[9px]">
+                                <i data-lucide="users" size="10"></i> ${g.Players || 'N/A'}
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -337,6 +356,7 @@ export function renderList() {
                 <div class="p-3 flex-grow flex flex-col justify-between">
                     <div>
                         <h4 class="font-black text-slate-800 text-sm leading-tight line-clamp-2 mb-1 group-hover:text-indigo-600 transition-colors">${g.Name}</h4>
+                        ${getBggLinkHtml(g)}
                         <div class="flex items-center gap-1 text-indigo-600 font-black text-[9px] uppercase tracking-wider mb-1">
                             <i data-lucide="map-pin" size="10"></i> ${g.Location}
                         </div>
